@@ -1,24 +1,37 @@
-import logo from './logo.svg';
+import Main from './components/Main/index';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
+import BarMenu from './components/BarMenu';
+import Trash from "./components/Trash/index"
+import { deleteDataAC, deleteFromTrashAC, deleteChildAC } from './redux/actionCreators';
+import { Route, useLocation } from "react-router-dom"
+import ChildFolder from "./components/ChildFolder/index"
+import FileEditor from './components/FileEditor';
 
 function App() {
+  
+  const location = useLocation()
+  const dispatch = useDispatch();
+  const checkedData = useSelector(state => state.foldersData.checkedData)
+
+  const deleteData = (data) => {
+    if (location.pathname == "/trash") {
+      dispatch(deleteFromTrashAC(data))
+    } else {
+      dispatch(deleteDataAC(data))
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BarMenu deleteData={deleteData} />
+      <Route exact path='/'>
+        <Main />
+      </Route>
+      <ChildFolder />
+      <Route path="/file"><FileEditor /></Route>
+      
+    </>
   );
 }
 
